@@ -50,6 +50,7 @@ app.MapPost("/recipes", (CreateRecipeRequest request, RecipeBookContext context)
     newRecipe.Ingredients = request.Ingredients;
     newRecipe.Steps = request.Steps;
     newRecipe.Notes = request.Notes;
+    newRecipe.CookingTimeMinutes = request.CookingTimeMinutes;
 
     context.Recipes.Add(newRecipe);
     context.SaveChanges();
