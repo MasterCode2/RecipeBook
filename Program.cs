@@ -126,9 +126,28 @@ app.MapGet("/recipes/search", (string title, RecipeBookContext context) =>
 
 });
 
-app.MapGet("/recipes", (RecipeBookContext context) =>
+app.MapGet("/recipes", (int? maxCookingTime, RecipeBookContext context) =>
 {
+    if (maxCookingTime != null)
+    {
+        if (maxCookingTime <= 1440 && maxCookingTime >= 1)
+        {
+            var foundRecipes = context.Recipes.Where(recipe => recipe.CookingTimeMinutes <= maxCookingTime).ToList();
+
+            return Results.Ok(foundRecipes);
+        }
+        return Results.BadRequest("Время должно быть в промежутке от 1 до 1440 минут!");
+    }
+    
     return Results.Ok(context.Recipes.ToList());
+});
+
+
+app.MapGet("/recipes/maxCookingTime", (int maxCookingTime, RecipeBookContext context) =>
+{
+    var foundRecipes = context.Recipes.Where(recipe => recipe.CookingTimeMinutes <= maxCookingTime).ToList();
+
+    return Results.Ok(foundRecipes);
 });
 
 app.Run();
