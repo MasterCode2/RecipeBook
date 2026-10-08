@@ -1,6 +1,5 @@
-public class Recipe
+public class CreateRecipeRequest
 {
-    public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public List<string> Ingredients { get; set; } = new List<string>();
     public List<string> Steps { get; set; } = new List<string>();
