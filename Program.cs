@@ -114,40 +114,45 @@ app.MapPut("/recipes/{id:int}", (int id, UpdateRecipeRequest updatedRequest, Rec
     }
 });
 
-app.MapGet("/recipes/search", (string title, RecipeBookContext context) =>
+app.MapGet("/recipes", (int? maxCookingTime, string? title, RecipeBookContext context, int page = 1, int pageSize = 10) =>
 {
-    if (string.IsNullOrWhiteSpace(title)) return Results.BadRequest("Введите название для поиска");
+    if (page < 1 || page > 10_000) return Results.BadRequest("Номер страницы должен быть в промежутке от 1 до 10000!");
+    if (pageSize < 1 || pageSize > 100) return Results.BadRequest("Количество рецептов в странице должно быть в промежутке от 1 до 100!");
 
-    var pattern = "%" + title + "%";
+    var query = context.Recipes.AsQueryable();
 
-    var foundRecipes = context.Recipes.Where(recipe => EF.Functions.ILike(recipe.Title, pattern)).ToList();
-
-    return Results.Ok(foundRecipes);
-
-});
-
-app.MapGet("/recipes", (int? maxCookingTime, RecipeBookContext context) =>
-{
     if (maxCookingTime != null)
     {
-        if (maxCookingTime <= 1440 && maxCookingTime >= 1)
-        {
-            var foundRecipes = context.Recipes.Where(recipe => recipe.CookingTimeMinutes <= maxCookingTime).ToList();
-
-            return Results.Ok(foundRecipes);
-        }
-        return Results.BadRequest("Время должно быть в промежутке от 1 до 1440 минут!");
+        if (maxCookingTime < 1 || maxCookingTime > 1440) return Results.BadRequest("Время готовки должно быть от 1 до 1440 минут!");
+        query = query.Where(recipe => recipe.CookingTimeMinutes <= maxCookingTime);
     }
+
+    if (title != null) 
+    {
+        if (string.IsNullOrWhiteSpace(title)) return Results.BadRequest("Название не может быть пустым!");
+
+        var pattern = "%" + title.Trim() + "%";
+
+        query = query.Where(recipe => EF.Functions.ILike(recipe.Title, pattern));
+    }
+
+    var totalCount = query.Count();
+
+    var foundRecipes = query
+    .OrderBy(recipe => recipe.CookingTimeMinutes)
+    .ThenBy(recipe => recipe.Id)
+    .Skip((page - 1) * pageSize)
+    .Take(pageSize)
+    .ToList();
     
-    return Results.Ok(context.Recipes.ToList());
-});
+    return Results.Ok(new
+    {
+        Items = foundRecipes,
+        TotalCount = totalCount,
+        Page = page,
+        PageSize = pageSize
 
-
-app.MapGet("/recipes/maxCookingTime", (int maxCookingTime, RecipeBookContext context) =>
-{
-    var foundRecipes = context.Recipes.Where(recipe => recipe.CookingTimeMinutes <= maxCookingTime).ToList();
-
-    return Results.Ok(foundRecipes);
+    });
 });
 
 app.Run();
