@@ -20,7 +20,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 
-app.MapPost("/recipes", (CreateRecipeRequest request, RecipeBookContext context) =>
+app.MapPost("/recipes", async (CreateRecipeRequest request, RecipeBookContext context) =>
 {
     if (string.IsNullOrWhiteSpace(request.Title))
     {
@@ -53,33 +53,33 @@ app.MapPost("/recipes", (CreateRecipeRequest request, RecipeBookContext context)
     newRecipe.CookingTimeMinutes = request.CookingTimeMinutes;
 
     context.Recipes.Add(newRecipe);
-    context.SaveChanges();
+    await context.SaveChangesAsync();
 
-    return Results.Ok(newRecipe);
+    return Results.Created($"/recipes/{newRecipe.Id}", newRecipe);
 });
 
-app.MapGet("/recipes/{id:int}", (int id, RecipeBookContext context) =>
+app.MapGet("/recipes/{id:int}", async (int id, RecipeBookContext context) =>
 {
-    var foundRecipe = context.Recipes.Find(id);
+    var foundRecipe = await context.Recipes.FindAsync(id);
 
     if (foundRecipe == null) return Results.NotFound("Рецепт не найден!");
     else return Results.Ok(foundRecipe);
 });
 
-app.MapDelete("/recipes/{id:int}", (int id, RecipeBookContext context) =>
+app.MapDelete("/recipes/{id:int}", async (int id, RecipeBookContext context) =>
 {
-    var foundRecipe = context.Recipes.Find(id);
+    var foundRecipe = await context.Recipes.FindAsync(id);
 
     if (foundRecipe != null) 
     {
         context.Recipes.Remove(foundRecipe);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return Results.NoContent();
     }
     else return Results.NotFound("Рецепт не найден!");
 });
 
-app.MapPut("/recipes/{id:int}", (int id, UpdateRecipeRequest updatedRequest, RecipeBookContext context) =>
+app.MapPut("/recipes/{id:int}", async (int id, UpdateRecipeRequest updatedRequest, RecipeBookContext context) =>
 {
     if (string.IsNullOrWhiteSpace(updatedRequest.Title)) return Results.BadRequest("Название рецепта обязательно!");
 
@@ -99,7 +99,7 @@ app.MapPut("/recipes/{id:int}", (int id, UpdateRecipeRequest updatedRequest, Rec
 
     if (updatedRequest.CookingTimeMinutes < 1 || updatedRequest.CookingTimeMinutes > 1440) return Results.BadRequest("Время приготовления должно быть от 1 до 1440!");
 
-    var foundRecipe = context.Recipes.Find(id);
+    var foundRecipe = await context.Recipes.FindAsync(id);
 
     if (foundRecipe == null) return Results.NotFound("Рецепт не найден!");
     else
@@ -109,12 +109,12 @@ app.MapPut("/recipes/{id:int}", (int id, UpdateRecipeRequest updatedRequest, Rec
         foundRecipe.Steps = updatedRequest.Steps;
         foundRecipe.Notes = updatedRequest.Notes;
         foundRecipe.CookingTimeMinutes = updatedRequest.CookingTimeMinutes;
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return Results.Ok(foundRecipe);
     }
 });
 
-app.MapGet("/recipes", (int? maxCookingTime, string? title, RecipeBookContext context, int page = 1, int pageSize = 10) =>
+app.MapGet("/recipes", async (int? maxCookingTime, string? title, RecipeBookContext context, int page = 1, int pageSize = 10) =>
 {
     if (page < 1 || page > 10_000) return Results.BadRequest("Номер страницы должен быть в промежутке от 1 до 10000!");
     if (pageSize < 1 || pageSize > 100) return Results.BadRequest("Количество рецептов в странице должно быть в промежутке от 1 до 100!");
@@ -136,14 +136,14 @@ app.MapGet("/recipes", (int? maxCookingTime, string? title, RecipeBookContext co
         query = query.Where(recipe => EF.Functions.ILike(recipe.Title, pattern));
     }
 
-    var totalCount = query.Count();
+    var totalCount = await query.CountAsync();
 
-    var foundRecipes = query
+    var foundRecipes = await query
     .OrderBy(recipe => recipe.CookingTimeMinutes)
     .ThenBy(recipe => recipe.Id)
     .Skip((page - 1) * pageSize)
     .Take(pageSize)
-    .ToList();
+    .ToListAsync();
     
     return Results.Ok(new
     {
