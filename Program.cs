@@ -1,4 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
+
+static IQueryable<Recipe> ApplyTitleFilter(IQueryable<Recipe> query, string title, string? providerName)
+{
+    var trimmedTitle = title.Trim();
+    var pattern = "%" + trimmedTitle + "%";
+
+    if (providerName == "Microsoft.EntityFrameworkCore.InMemory")
+    {
+        return query.Where(recipe => RecipeTitleMatcher.LikePatternMatches(recipe.Title, pattern));
+    }
+
+    return query.Where(recipe => EF.Functions.ILike(recipe.Title, pattern));
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +29,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -131,9 +148,7 @@ app.MapGet("/recipes", async (int? maxCookingTime, string? title, RecipeBookCont
     {
         if (string.IsNullOrWhiteSpace(title)) return Results.BadRequest("Название не может быть пустым!");
 
-        var pattern = "%" + title.Trim() + "%";
-
-        query = query.Where(recipe => EF.Functions.ILike(recipe.Title, pattern));
+        query = ApplyTitleFilter(query, title, context.Database.ProviderName);
     }
 
     var totalCount = await query.CountAsync();
@@ -156,3 +171,23 @@ app.MapGet("/recipes", async (int? maxCookingTime, string? title, RecipeBookCont
 });
 
 app.Run();
+
+
+public partial class Program { }
+
+internal static class RecipeTitleMatcher
+{
+    public static bool LikePatternMatches(string? value, string pattern)
+    {
+        var target = value ?? string.Empty;
+
+        var regexPattern = string.Concat(pattern.Select(ch => ch switch
+        {
+            '%' => ".*",
+            '_' => ".",
+            _ => Regex.Escape(ch.ToString())
+        }));
+
+        return Regex.IsMatch(target, regexPattern, RegexOptions.IgnoreCase);
+    }
+}

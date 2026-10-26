@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fbf8f4" />
+  <meta name="description" content="RecipeBook — уютная коллекция любимых рецептов" />
+  <title>RecipeBook — готовить с удовольствием</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg aria-hidden="true" class="svg-sprite" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m14.5 5-7 7 7 7"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9.5 5 7 7-7 7"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 17.5-.5 3 3-.5L19 7.5 16.5 5 4 17.5Z"/><path d="m14.7 6.8 2.5 2.5"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 4.5h5M7.3 7l.8 12h7.8l.8-12M10 10v6m4-6v6"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2Z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5.5c-2.7-2-6-2.1-9-1.5v15c3-.6 6.3-.5 9 1.5 2.7-2 6-2.1 9-1.5V4c-3-.6-6.3-.5-9 1.5Zm0 0v15"/></symbol>
+    <symbol id="i-ingredients" viewBox="0 0 24 24"><path d="M5 3v8a3 3 0 0 0 6 0V3M8 3v18M17 3c-2 2-3 5-3 9h5V3h-2Zm2 9v9"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M5.5 9A7.5 7.5 0 0 1 19 7l1 4M4 13l1 4a7.5 7.5 0 0 0 13.5-2"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="shell nav-inner">
+      <a class="brand" href="/" aria-label="RecipeBook — на главную">
+        <span class="brand-mark">✳</span>
+        <span class="brand-copy"><strong>recipe<span>book.</span></strong><small>место для вкусных идей</small></span>
+      </a>
+      <div class="nav-actions">
+        <span class="header-note"><span class="note-dot"></span> Моя кулинарная коллекция</span>
+        <button type="button" class="btn btn-primary nav-create" id="header-create"><svg class="icon"><use href="#i-plus"/></svg><span>Добавить рецепт</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero" aria-label="Добро пожаловать в RecipeBook">
+      <div class="hero-copy">
+        <div class="eyebrow"><svg class="icon"><use href="#i-spark"/></svg> ГОТОВИТЬ — ЭТО ПРОСТО</div>
+        <h1>Твои любимые<br/>рецепты <em>в одном месте.</em></h1>
+        <p>Сохраняй то, что хочется приготовить снова. Находи идеи для ужина и собирай свою маленькую книгу вкусов.</p>
+        <button class="btn btn-dark" type="button" id="hero-create">Записать новый рецепт <svg class="icon"><use href="#i-arrow"/></svg></button>
+        <div class="hero-bottom"><span class="mini-avatar">♥</span><span>Каждое вкусное блюдо начинается с идеи</span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+        <div class="orbit-item leaf-one">🌿</div><div class="orbit-item tomato-one">🍅</div><div class="orbit-item lemon-one">🍋</div>
+        <div class="plate-shadow"></div><div class="plate-outer"><div class="plate-inner"><span class="plate-food">🥗</span></div></div>
+        <div class="floating-card"><span class="floating-star">✦</span><span>Ммм, как вкусно!</span></div>
+        <span class="hero-flower">✳</span>
+      </div>
+    </section>
+
+    <section class="collection" id="collection" aria-labelledby="collection-title">
+      <div class="section-top">
+        <div><div class="section-kicker">ТВОЯ КОЛЛЕКЦИЯ</div><h2 id="collection-title">Что приготовим <span>сегодня?</span></h2><p class="section-description">Любимые блюда всегда под рукой.</p></div>
+        <div class="results-count" aria-live="polite"><span class="result-number" id="result-count">—</span><span id="result-label">рецептов найдено</span></div>
+      </div>
+      <div class="filters" role="search">
+        <label class="search-field"><svg class="icon"><use href="#i-search"/></svg><span class="sr-only">Поиск по названию</span><input type="search" id="search-input" placeholder="Найти любимое блюдо..." autocomplete="off" /></label>
+        <label class="select-field"><svg class="icon"><use href="#i-clock"/></svg><span class="sr-only">Время приготовления</span><select id="time-filter"><option value="">Любое время</option><option value="15">До 15 минут</option><option value="30">До 30 минут</option><option value="45">До 45 минут</option><option value="60">До 1 часа</option><option value="90">До 1,5 часов</option><option value="120">До 2 часов</option></select></label>
+        <button class="btn btn-clear" id="reset-filters" type="button" hidden>Сбросить <svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="collection-bar"><span id="collection-caption">Все рецепты</span><span class="sort-note"><svg class="icon"><use href="#i-clock"/></svg> Сначала быстрые блюда</span></div>
+      <div id="status-region" role="status" aria-live="polite"></div>
+      <div id="recipes-grid" class="recipes-grid" aria-live="polite"></div>
+      <nav id="pagination" class="pagination" aria-label="Страницы рецептов"></nav>
+    </section>
+
+    <section class="bottom-note"><span class="bottom-note-art">✳</span><div><strong>Вкусные моменты стоит сохранять.</strong><p>Добавь ещё один любимый рецепт в свою коллекцию.</p></div><button class="btn btn-outline" type="button" id="footer-create"><svg class="icon"><use href="#i-plus"/></svg> Новый рецепт</button></section>
+  </main>
+
+  <footer class="site-footer"><div class="shell footer-inner"><span>✳ recipebook.</span><span>Сделано с любовью к вкусной еде ♡</span></div></footer>
+
+  <dialog class="modal" id="detail-modal" aria-labelledby="detail-title">
+    <div class="modal-frame detail-frame">
+      <button type="button" class="icon-button modal-close" data-close="detail-modal" aria-label="Закрыть"><svg class="icon"><use href="#i-close"/></svg></button>
+      <div id="detail-content"></div>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="form-modal" aria-labelledby="form-title">
+    <div class="modal-frame form-frame">
+      <button type="button" class="icon-button modal-close" data-close="form-modal" aria-label="Закрыть"><svg class="icon"><use href="#i-close"/></svg></button>
+      <div class="form-heading"><div class="section-kicker">МОЯ КНИГА РЕЦЕПТОВ</div><h2 id="form-title">Новый рецепт</h2><p>Заполни детали блюда, чтобы сохранить его в своей коллекции.</p></div>
+      <form id="recipe-form">
+        <div class="form-row"><label for="recipe-title">Название блюда <span>*</span></label><input id="recipe-title" name="title" maxlength="160" required placeholder="Например, паста с томатами" /></div>
+        <div class="form-row"><label for="recipe-minutes">Время приготовления, минут <span>*</span></label><input id="recipe-minutes" name="minutes" type="number" min="1" max="1440" step="1" required placeholder="Например, 30" /></div>
+        <div class="form-row"><label for="recipe-ingredients">Ингредиенты <span>*</span> <small>каждый с новой строки</small></label><textarea id="recipe-ingredients" name="ingredients" rows="4" required placeholder="200 г муки&#10;2 яйца&#10;Соль по вкусу"></textarea></div>
+        <div class="form-row"><label for="recipe-steps">Шаги приготовления <span>*</span> <small>каждый с новой строки</small></label><textarea id="recipe-steps" name="steps" rows="4" required placeholder="Подготовить ингредиенты&#10;Смешать и приготовить&#10;Подать к столу"></textarea></div>
+        <div class="form-row"><label for="recipe-notes">Заметки <small>необязательно</small></label><textarea id="recipe-notes" name="notes" rows="3" placeholder="Маленький секрет, полезный совет..."></textarea></div>
+        <div class="form-error" id="form-error" role="alert" hidden></div>
+        <div class="form-actions"><button class="btn btn-ghost" type="button" data-close="form-modal">Отмена</button><button class="btn btn-primary" type="submit" id="save-recipe"><svg class="icon"><use href="#i-check"/></svg><span>Сохранить рецепт</span></button></div>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="delete-modal" aria-labelledby="delete-title"><div class="modal-frame delete-frame"><div class="delete-icon"><svg class="icon"><use href="#i-trash"/></svg></div><h2 id="delete-title">Удалить рецепт?</h2><p id="delete-description">Рецепт исчезнет из твоей коллекции. Это действие нельзя отменить.</p><div class="form-error" id="delete-error" role="alert" hidden></div><div class="delete-actions"><button class="btn btn-ghost" type="button" data-close="delete-modal">Оставить</button><button class="btn btn-danger" type="button" id="confirm-delete">Да, удалить</button></div></div></dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
